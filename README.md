@@ -51,7 +51,7 @@ This project evolved through three phases, documented in [`research_log/`](resea
 ### Setup
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/scalable-eval-aar.git
+git clone https://github.com/gke0op/scalable-eval-aar.git
 cd scalable-eval-aar
 pip install -r requirements.txt
 ```
