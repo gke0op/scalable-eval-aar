@@ -128,3 +128,7 @@ We are transparent about the constraints of this study:
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+## Framing Experiment (in progress)
+
+Does telling a tool-using agent its situation is *real*, *a test*, or *a simulation* change which action it takes when a risky shortcut is available? [`framing/`](framing/) has a preregistered design ([`PREREGISTRATION.md`](framing/PREREGISTRATION.md)), 12 risky scenarios and 6 benign controls with mock tools, deterministic scoring from the parsed tool call (no LLM judge), and scenario-clustered bootstrap and permutation analysis. Current status and verification are in [`FINDINGS.md`](framing/FINDINGS.md). The first run was blocked by sandbox network policy, so no model data has been collected yet.
