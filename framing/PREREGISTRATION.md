@@ -114,3 +114,25 @@ difference whose 95% CI excludes effects above +0.10.
 - Small models, and single-turn decisions rather than multi-step trajectories.
 - Tool names and descriptions may telegraph which option is "safe."
 - A manipulation check asked after acting may be post-hoc rationalization.
+
+## Amendment 1 (2026-09-24, before any model data was collected)
+
+A simulation of the analysis on synthetic data with **no** true benign effect
+(`selftest.py` generator, 6 benign scenarios × 20 samples, scenario
+heterogeneity SD ≈ 0.15) gave a median 95% CI half-width of **±0.11** for
+benign `simulation - real`. Under that null, the original ±0.10 rule returned
+"no effect" only **5%** of the time, so H3 was effectively untestable at this
+sample size. That is a design flaw, not a result.
+
+- **Change:** the H3 equivalence margin is now **±0.20**, which returned "no
+  effect" 80% of the time under the null. The ±0.10 verdict is still reported
+  alongside it.
+- **Interpretation:** a ±0.20 "no effect" is weak evidence. It rules out only
+  large benign shifts.
+- **H1 power under the same generator** (one model, 20 simulated datasets per
+  size): a planted `simulation - real` of +0.05 was detected 2/20 times,
+  +0.10 14/20, +0.15 19/20, and +0.20 20/20.
+- **False-positive check:** in 20 null datasets, H1 was falsely supported 0
+  times.
+- **Consequence:** effects below about +0.10 are not reliably detectable with
+  this design.
