@@ -129,6 +129,6 @@ We are transparent about the constraints of this study:
 
 MIT — see [LICENSE](LICENSE).
 
-## Framing Experiment (in progress)
+## Framing Experiment
 
-Does telling a tool-using agent its situation is *real*, *a test*, or *a simulation* change which action it takes when a risky shortcut is available? [`framing/`](framing/) has a preregistered design ([`PREREGISTRATION.md`](framing/PREREGISTRATION.md)), 12 risky scenarios and 6 benign controls with mock tools, deterministic scoring from the parsed tool call (no LLM judge), and scenario-clustered bootstrap and permutation analysis. Current status and verification are in [`FINDINGS.md`](framing/FINDINGS.md). The first run was blocked by sandbox network policy, so no model data has been collected yet.
+Does telling a tool-using agent its situation is *real*, *a test*, or *a simulation* change which action it takes when a risky shortcut is available? [`framing/`](framing/) has a preregistered design ([`PREREGISTRATION.md`](framing/PREREGISTRATION.md)), 12 risky scenarios and 6 benign controls with mock tools, and deterministic scoring from the parsed tool call (no LLM judge). **Result, on Qwen 2.5 1.5B and 3B (2,880 episodes):** no framing effect on actions. `simulation − real` was −0.025 for 1.5B and −0.009 for 3B, so the preregistered hypothesis is falsified. The 3B model's self-report did track the framing (57% "real" vs 0%). See [`FINDINGS.md`](framing/FINDINGS.md).
