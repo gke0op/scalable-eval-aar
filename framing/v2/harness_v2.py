@@ -82,7 +82,7 @@ BASE_SYSTEM = (
 
 def seed_for(scenario_index, sample_idx, stage):
     # Shared across all 24 cells of a (scenario, sample): every factor contrast is paired.
-    return (90_000 if stage == "calibrate" else 20_000) + 1000 * scenario_index + sample_idx
+    return {"screen": 70_000, "calibrate": 90_000}.get(stage, 20_000) + 1000 * scenario_index + sample_idx
 
 
 def system_prompt(s, cond):
@@ -135,13 +135,17 @@ def final(first, second):
     return second if second in ("risky", "parse_fail") else "careful"
 
 
-def episode(backend, model, s, cond, seed, temperature):
+def episode(backend, model, s, cond, seed, temperature, first_only=False):
     msgs = [{"role": "system", "content": system_prompt(s, cond)},
             {"role": "user", "content": user_turn(s, cond, task_text(s, cond))}]
     r1, e1 = safe_chat(backend, model, msgs, temperature, seed, True)
     o1, p1 = score(s, r1)
     msgs.append({"role": "assistant", "content": r1})
     r2 = o2 = p2 = e2 = None
+    if first_only:  # screening: the model's own first move, no pushback, no check
+        return {"messages": msgs, "response_1": r1, "parsed_1": p1, "first_outcome": o1, "response_2": None,
+                "parsed_2": None, "second_outcome": None, "final_outcome": o1, "check_response": None,
+                "check_answer": None, "backend_errors": [e for e in (e1,) if e]}
     if o1 == "careful":
         msgs.append({"role": "user", "content": user_turn(s, cond, s["pushback"][cond["register"]])})
         r2, e2 = safe_chat(backend, model, msgs, temperature, seed + 500, True)
@@ -155,6 +159,8 @@ def episode(backend, model, s, cond, seed, temperature):
 
 
 def conditions(stage):
+    if stage == "screen":  # one neutral cell
+        return [dict(framing=None, delivery=None, pressure="low", register="ai")]
     if stage == "calibrate":  # no framing; pressure x register only
         return [dict(framing=None, delivery=None, pressure=p, register=r)
                 for p, r in itertools.product(FACTORS["pressure"], FACTORS["register"])]
@@ -169,7 +175,7 @@ def load_selected():
 
 
 def run(backend, model, stage, out, samples, temperature, scen=None):
-    scen = scen or (sc2.CANDIDATES if stage == "calibrate" else load_selected())
+    scen = scen or (sc2.CANDIDATES if stage in ("calibrate", "screen") else load_selected())
     done = set()
     if os.path.exists(out):
         with open(out) as f:
@@ -193,7 +199,7 @@ def run(backend, model, stage, out, samples, temperature, scen=None):
                     row = {"model": model, "backend": backend.name, "backend_version": backend.version,
                            "stage": stage, "scenario_id": s["id"], "kind": s["kind"], **cond,
                            "cond_key": key, "sample_idx": k, "seed": seed, "temperature": temperature,
-                           **episode(backend, model, s, cond, seed, temperature)}
+                           **episode(backend, model, s, cond, seed, temperature, first_only=stage == "screen")}
                     row["latency_s"] = round(time.time() - t0, 2)
                     f.write(json.dumps(row) + "\n")
                     f.flush()
@@ -202,14 +208,14 @@ def run(backend, model, stage, out, samples, temperature, scen=None):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--stage", choices=["calibrate", "main"], required=True)
+    ap.add_argument("--stage", choices=["screen", "calibrate", "main"], required=True)
     ap.add_argument("--backend", choices=["ollama", "mock"], default="ollama")
     ap.add_argument("--model", default="qwen2.5:3b-instruct")
     ap.add_argument("--samples", type=int)
     ap.add_argument("--out")
     ap.add_argument("--temperature", type=float, default=0.7)
     a = ap.parse_args()
-    samples = a.samples or (3 if a.stage == "calibrate" else 6)
+    samples = a.samples or (3 if a.stage in ("calibrate", "screen") else 6)
     out = a.out or os.path.join(HERE, "results", f"{a.stage}.jsonl")
     if a.backend == "mock" and os.path.abspath(out).startswith(os.path.join(HERE, "results")):
         sys.exit("refusing to write mock output into framing/v2/results/")
