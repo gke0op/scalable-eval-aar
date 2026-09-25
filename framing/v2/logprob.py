@@ -21,6 +21,7 @@ import math
 import os
 import sys
 import time
+import urllib.error
 import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -39,8 +40,18 @@ def _chat(model, msgs, num_predict):
     p = {"model": model, "messages": msgs, "stream": False, "logprobs": True, "top_logprobs": TOP_K,
          "options": {"temperature": 0, "seed": 0, "num_predict": num_predict}}
     req = urllib.request.Request(OLLAMA + "/api/chat", json.dumps(p).encode(), {"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=900) as r:
-        return json.loads(r.read())
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(req, timeout=900) as r:
+                return json.loads(r.read())
+        except urllib.error.HTTPError as e:
+            body = e.read().decode(errors="replace")
+            # Retry only server-process crashes (greedy decoding is deterministic, so a
+            # retried call returns the same distribution); anything else is raised.
+            if e.code != 500 or not any(k in body for k in ("EOF", "terminated", "killed")) or attempt == 2:
+                raise
+            print(f"  server crash ({body[:80]}), retry {attempt + 1}", flush=True)
+            time.sleep(15)
 
 
 def next_dist(model, msgs, prefill):
