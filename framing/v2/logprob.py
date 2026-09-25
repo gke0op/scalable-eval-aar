@@ -48,10 +48,16 @@ def _chat(model, msgs, num_predict):
             body = e.read().decode(errors="replace")
             # Retry only server-process crashes (greedy decoding is deterministic, so a
             # retried call returns the same distribution); anything else is raised.
-            if e.code != 500 or not any(k in body for k in ("EOF", "terminated", "killed")) or attempt == 2:
+            if e.code != 500 or "repeat limit" in body or attempt == 2:
                 raise
             print(f"  server crash ({body[:80]}), retry {attempt + 1}", flush=True)
             time.sleep(15)
+
+
+def unload(model):
+    req = urllib.request.Request(OLLAMA + "/api/generate", json.dumps({"model": model, "keep_alive": 0}).encode(),
+                                 {"Content-Type": "application/json"})
+    urllib.request.urlopen(req, timeout=120).read()
 
 
 def next_dist(model, msgs, prefill):
@@ -176,6 +182,7 @@ def run(model, out, scen_ids=None):
                                     **d, "calls": calls[0], "latency_s": round(time.time() - t0, 2),
                                     "top_k": TOP_K, "messages": msgs}) + "\n")
                 f.flush()
+            unload(model)  # gemma2 (SWA) accumulates context checkpoints until the OOM killer fires
             print(f"  {s['id']} done", flush=True)
 
 
