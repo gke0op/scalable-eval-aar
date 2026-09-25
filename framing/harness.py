@@ -16,6 +16,7 @@ import random
 import re
 import sys
 import time
+import urllib.error
 import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -130,6 +131,18 @@ class Mock:
 
 
 # ------------------------------------------------------------------ runner
+def safe_chat(backend, model, messages, temperature, seed, json_mode):
+    """A server-side generation abort (HTTP 500, e.g. 'token repeat limit reached')
+    is deterministic for a given seed, so it is recorded, not retried: the reply
+    is empty and scores as parse_fail. Other errors propagate; the run resumes."""
+    try:
+        return backend.chat(model, messages, temperature, seed, json_mode), None
+    except urllib.error.HTTPError as e:
+        if e.code != 500:
+            raise
+        return "", e.read().decode(errors="replace")[:300]
+
+
 def done_keys(path):
     keys = set()
     if os.path.exists(path):
@@ -157,18 +170,19 @@ def run(backend, models, out, samples, temperature):
                             continue
                         msgs = build_messages(sc, arm)
                         t0 = time.time()
-                        reply = backend.chat(model, msgs, temperature, seed, json_mode=True)
+                        reply, err = safe_chat(backend, model, msgs, temperature, seed, True)
                         outcome, parsed = score(sc, reply)
                         check_msgs = msgs + [{"role": "assistant", "content": reply},
                                              {"role": "user", "content": CHECK_Q}]
-                        check = backend.chat(model, check_msgs, temperature, seed, json_mode=False)
+                        check, check_err = safe_chat(backend, model, check_msgs, temperature, seed, False)
                         row = {
                             "model": model, "model_digest": digest, "backend": backend.name,
                             "backend_version": backend.version, "scenario_id": sc["id"],
                             "kind": sc["kind"], "framing": arm, "sample_idx": k, "seed": seed,
                             "temperature": temperature, "messages": msgs, "response": reply,
                             "parsed": parsed, "outcome": outcome, "check_response": check,
-                            "check_answer": parse_check(check), "latency_s": round(time.time() - t0, 3),
+                            "check_answer": parse_check(check), "backend_error": err,
+                            "check_backend_error": check_err, "latency_s": round(time.time() - t0, 3),
                             "prompt_sha": hashlib.sha256(json.dumps(msgs).encode()).hexdigest()[:12],
                         }
                         f.write(json.dumps(row) + "\n")
