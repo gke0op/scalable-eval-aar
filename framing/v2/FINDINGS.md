@@ -108,6 +108,64 @@ than when told it's real.
 - **Benign controls.** There are only 4, so they are uninformative (CIs span
   ±5 logits). We cannot tell "acts more" apart from "cares less" here.
 
+## Related work
+
+**Verify before citing.** These summaries come from a web search on
+2026-09-26, and the paper details were extracted by a tool, not read in full.
+
+- **Anthropic, *Agentic Misalignment* (2025).**
+  - Finding: in the blackmail scenario, Claude Opus 4 blackmailed **55.1%** of
+    the time when its reasoning stated the scenario was real, vs **6.5%** when
+    it stated it was an evaluation.
+  - Differences from us: correlational (the model's own stated belief, not a
+    manipulation), a frontier model, and the **opposite direction**.
+- **Chen et al., *The Shadow Self* (arXiv 2601.17344, 2026).**
+  - The same manipulation as ours: "production environment where its decisions
+    have real consequences" vs "fictional and used solely for testing".
+  - It appears only as an ablation: GPT-4.1, 400 scenarios, LLM-judge scoring.
+  - Result: real framing gave slightly **more** risky actions (21.25% vs
+    18.75%), again the opposite direction to us, and small.
+- **Nayan et al., *Evaluation Awareness Is Not One Capability* (arXiv
+  2606.23583, 2026).**
+  - 37 open models from 0.5B to 32B, measured with chat refusal/compliance.
+  - Hypothetical framing raises compliance by up to +30 points in mid-size
+    models, and explicit evaluation framing lowers it by 5–6 points.
+  - This matches our small-model direction, but in chat rather than agentic
+    tool use.
+- **Abdelnabi & Salem, *Linear Control of Test Awareness Reveals Differential
+  Compliance in Reasoning Models* (arXiv 2505.14617, 2025).** Steering
+  reasoning models toward or away from "being tested" shifts harmful
+  compliance, in a direction that depends on the model and the task.
+- **Also relevant:**
+  - Knecht et al., *Evaluation Awareness in Language Models Has Limited Effect
+    on Behaviour* (arXiv 2605.05835, 2026);
+  - Zhuang & Aranguri, *Not All Eval-Awareness Is Equal* (arXiv 2608.27340,
+    2026): the kind of evaluation a model believes it is in predicts
+    compliance;
+  - *Probing and Steering Evaluation Awareness* (arXiv 2507.01786);
+  - *Steering Evaluation-Aware Language Models to Act Like They Are Deployed*
+    (arXiv 2510.20487).
+
+**What this work adds, as far as this search shows:**
+
+1. **The real-vs-simulation manipulation on agentic tool choices, scored
+   deterministically.** No LLM judge is involved.
+2. **A decision-token log-prob instrument,** validated against sampling:
+   ρ = 0.86 across scenarios, and r = 0.98 / 0.74 for the predicted shifts.
+   It sees shifts below the decision threshold.
+3. **Separation of the framing sentence from stakes content.** In gemma,
+   "simulation" loosens the model (+1.45) while concrete stakes tighten it
+   (−4.33).
+4. **Preregistration throughout, including the nulls and stopped stages.**
+
+**Open tension.** In small open models (ours, and Nayan et al.), simulation or
+hypothetical framing makes the model *more* risky. In frontier and near-frontier
+reports (*Agentic Misalignment*, *Shadow Self*), it is *less* risky when the
+model believes it is under test. If the sign of the effect depends on
+capability, evaluations would misestimate risk in opposite directions for weak
+and strong models. `PREREGISTRATION_LADDER.md` tests this within the qwen2.5
+family.
+
 ## Deviations and incidents
 
 - **gemma crashes.** The gemma run was killed twice by the kernel's
