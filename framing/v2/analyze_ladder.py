@@ -79,6 +79,17 @@ def analyze(rows):
         vs = list(sls.values())
         res["secondary_sentence_slope"] = {"mean_slope_per_doubling": float(np.mean(vs)), "ci": boot_ci(vs),
                                            "p_one_sided": signflip_one_sided(vs)}
+        bad = {r["scenario_id"] for r in rows if r["model"] in res["models_present"] and r["kind"] == "risky"
+               and (r.get("censored") or abs(r["logit"]) >= 13.8)}
+        res["clipped_or_censored_cells"] = {m: sum(1 for r in rows if r["model"] == m and (r.get("censored") or abs(r["logit"]) >= 13.8))
+                                            for m in res["models_present"]}
+        clean = {s: v for s, v in sl.items() if s not in bad}
+        if len(clean) >= 5:
+            vc = list(clean.values())
+            res["sensitivity_unclipped"] = {"n_scenarios": len(vc), "mean_slope_per_doubling": float(np.mean(vc)),
+                                            "ci": boot_ci(vc), "p_one_sided": signflip_one_sided(vc)}
+        else:
+            res["sensitivity_unclipped"] = {"n_scenarios": len(clean), "note": "too few unclipped scenarios"}
     top = res["models_present"][-1] if res["models_present"] else None
     if top == "qwen2.5:14b-instruct":
         v = list(eff[top].values())
@@ -100,6 +111,9 @@ def main():
               f"one-sided p={p['p_one_sided']:.4f} -> supported: {p['supported']} (models: {len(p['models'])})")
         s = res["secondary_sentence_slope"]
         print(f"secondary (sentence only) slope: {s['mean_slope_per_doubling']:+.3f} [{s['ci'][0]:+.2f}, {s['ci'][1]:+.2f}] p={s['p_one_sided']:.4f}")
+    if "sensitivity_unclipped" in res:
+        print("clipped/censored cells per model:", res["clipped_or_censored_cells"])
+        print("sensitivity (unclipped scenarios):", {k: (round(v, 3) if isinstance(v, float) else v) for k, v in res["sensitivity_unclipped"].items()})
     if "secondary_reversal_at_14b" in res:
         s = res["secondary_reversal_at_14b"]
         print(f"secondary reversal at 14B: sim-real {s['sim_minus_real']:+.2f} [{s['ci'][0]:+.2f}, {s['ci'][1]:+.2f}] "
