@@ -122,3 +122,16 @@ All are tested on risky scenarios, framed cells, in logit units.
   They are close to the sampled behavior (ρ = 0.86), but not identical to it.
 - **Immersive "real" is confounded with stakes content** (user counts, an open
   incident). That is why H1s is a separate primary hypothesis.
+
+## Amendment 1 (2026-09-26, before any qwen2.5:7b log-prob data): second replication model
+
+- **Model:** `qwen2.5:7b-instruct`, added as a second replication.
+- **Why this model:** it is chosen mechanically as the next most cautious model
+  in the screen (`screen_result.json`: 9 of 24 scenarios always careful, after
+  gemma2:9b's 13). It is also a third model family, alongside Google and Meta.
+- **Protocol:** identical: same scenarios, cells, instrument and hypotheses,
+  with Holm correction over the 6 primaries within the model. It is reported
+  whatever the result.
+- **State of the data:** the gemma2:9b and llama3.1:8b results were already
+  known when this amendment was written. No qwen2.5:7b log-prob data exists
+  yet.
