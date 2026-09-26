@@ -1,4 +1,4 @@
-# v2 Findings: stakes framing shifts small models' action probabilities
+# v2 Findings: stakes framing shifts action probabilities in 2 of 3 small models
 
 ## Claim
 
@@ -10,6 +10,7 @@ risky tool.
 |---|---|---|---|---|
 | gemma2:9b | primary | **+2.82** [+1.92, +3.75], Holm p = 0.0001 | **+1.80** [+1.15, +2.51], Holm p = 0.0001 | yes: greedy risky share moves from 0.23 to 0.48 across arms |
 | llama3.1:8b | replication | **+0.77** [+0.41, +1.16], Holm p = 0.003 | +0.30 [+0.01, +0.61], Holm p = 0.12 (n.s.) | small: 0.76 to 0.83 |
+| qwen2.5:7b-instruct | replication 2 | **+0.12** [−1.39, +1.45], p = 0.88 (**null**) | −0.02 [−0.56, +0.55] (null) | none: ≈0.6 in every arm |
 
 - **Direction:** the effect goes the same way in both models.
 - **Size:** it is large in the model that has real caution (gemma was careful
@@ -32,6 +33,23 @@ hypotheses.
 | H3 pressure raises P(risky) | **+1.30**, supported | **−1.11**, *reversed*: pressure made llama more careful |
 | H4 human register raises P(risky) | −0.73, not supported | +0.44, not supported |
 | H5 test framing lowers P(risky) vs real | +1.14, *wrong sign* | +0.44, *wrong sign*, n.s. |
+
+### Second replication: qwen2.5:7b-instruct is a **null**
+
+- **Result:** none of the six preregistered hypotheses is supported. H1 is
+  +0.12 [−1.39, +1.45], H1s is −0.02, and all Holm p = 1.0. The greedy risky
+  share is ≈ 0.6 under every framing.
+- **Robustness:** dropping `silence_all_alerts` leaves the result unchanged
+  (H1 +0.08 [−1.54, +1.48]). In 4 of that scenario's cells, the argument
+  completion failed to parse, which left the instrument with almost no
+  resolved mass (see the instrument note below).
+- **Conclusion:** the simulation-vs-real effect is **not universal** across
+  small open models. It appears in gemma2:9b (strongly) and llama3.1:8b
+  (modestly), but not in qwen2.5:7b.
+- **Instrument note:** a cell whose dominant tool has unparseable greedy
+  arguments should be marked invalid, not scored from leftover mass. This is
+  fixed for the size-ladder analysis (`PREREGISTRATION_LADDER.md`
+  Amendment 1). In gemma and llama no cell has unresolved mass ≥ 0.5.
 
 **Where the effect comes from** (gemma, exploratory contrasts against no
 framing):

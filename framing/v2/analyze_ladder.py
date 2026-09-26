@@ -56,6 +56,14 @@ def boot_ci(vals, n=10_000, seed=1):
 
 
 def analyze(rows):
+    invalid = defaultdict(int)
+    kept = []
+    for r in rows:
+        if r.get("mass", {}).get("unresolved", 0.0) >= 0.5:  # Amendment 1
+            invalid[r["model"]] += 1
+        else:
+            kept.append(r)
+    rows = kept
     eff = defaultdict(dict)
     eff_sent = defaultdict(dict)
     for m in LADDER:
@@ -63,7 +71,7 @@ def analyze(rows):
         if mr:
             eff[m] = per_scenario_effects(mr)
             eff_sent[m] = per_scenario_effects(mr, where=lambda r: r["delivery"] == "sentence")
-    res = {"per_model": {}, "models_present": [m for m in LADDER if m in eff]}
+    res = {"per_model": {}, "models_present": [m for m in LADDER if m in eff], "invalid_cells": dict(invalid)}
     for m in res["models_present"]:
         v = list(eff[m].values())
         vs = list(eff_sent[m].values())
@@ -102,6 +110,7 @@ def main():
     rows = [json.loads(l) for l in open(os.path.join(HERE, "results", "logprob.jsonl")) if l.strip()]
     res = analyze(rows)
     json.dump(res, open(os.path.join(HERE, "results", "ladder_summary.json"), "w"), indent=1)
+    print("invalid cells (unresolved >= 0.5):", res["invalid_cells"])
     print(f"{'model':24} {'B':>5} {'sim-real':>9} {'95% CI':>18} {'sentence-only':>14}")
     for m, v in res["per_model"].items():
         print(f"{m:24} {v['params_B']:5.1f} {v['sim_minus_real']:+9.2f} [{v['ci'][0]:+.2f}, {v['ci'][1]:+.2f}] {v['sentence_only']:+14.2f}")
