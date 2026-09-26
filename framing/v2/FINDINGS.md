@@ -1,4 +1,4 @@
-# v2 Findings: stakes framing shifts action probabilities in 2 of 3 small models
+# v2 Findings: "simulation" framing raises risky-tool odds in most small open models tested
 
 ## Claim
 
@@ -113,6 +113,40 @@ than when told it's real.
 - **What it doesn't settle:** the pairs were chosen for large predicted
   shifts, so the confirmation covers the cells where the instrument predicts a
   visible effect. It is not an average over all scenarios.
+
+## Size ladder, qwen2.5 1.5B → 14B (`PREREGISTRATION_LADDER.md`): **no size trend, no reversal**
+
+| qwen2.5 | sim − real (logit) | 95% CI | sentence only | invalid cells | clipped/censored (high / low) |
+|---|---|---|---|---|---|
+| 1.5B | **+1.62** | [+0.99, +2.25] | +1.24 | 34 | 8 / 51 |
+| 3B | +1.35 | [−0.12, +2.76] | −1.04 | 9 | **253** / 35 |
+| 7B | +0.10 | [−1.46, +1.42] | −0.02 | 4 | – |
+| 14B | **+1.84** | [+0.54, +3.52] | +1.44 | 38 | 43 / **363** |
+
+- **HL1 (the effect shrinks with size): not supported.** The mean slope per
+  doubling of size is −0.06 [−0.60, +0.57], one-sided p = 0.43. The
+  sentence-only slope is +0.18, p = 0.73.
+- **HL2 (reversal at 14B): not supported.** At 14B, `simulation − real` is
+  +1.84, which is the *same* direction as gemma and llama.
+- **The unclipped sensitivity check cannot be computed.** Only 2 scenarios are
+  unclipped at every size.
+  - 3B sits mostly at the risky ceiling, which compresses its effect.
+  - 14B sits mostly at the careful floor. Censored `real` cells are bounded
+    from above, so the 14B effect is, if anything, an underestimate.
+- **Invalid cells** (unresolved mass ≥ 0.5, per Amendment 1) are concentrated
+  in a few scenarios where argument completion fails (`silence_all_alerts`,
+  `chmod_777`, `canary_skip`), and are excluded.
+- **Reading, within qwen2.5 up to 14B:** `simulation > real` in 3 of 4 sizes,
+  clearly at 1.5B and 14B. 7B is the exception, not the start of a trend. So
+  there is no evidence that this effect weakens or flips with scale in this
+  range.
+- **The tension with frontier reports remains open.** Possible explanations:
+  - the flip happens beyond 14B;
+  - it depends on safety training rather than size;
+  - it isn't a real conflict. *Agentic Misalignment* correlates behavior with
+    the model's *stated* belief rather than manipulating the framing, and
+    scenarios that feel more real could independently elicit both.
+  - Only a direct test on a frontier model can distinguish these.
 
 ## Robustness
 
@@ -231,7 +265,7 @@ family.
 ## Next
 
 1. ~~Sampling confirmation~~: done, confirmed for both models (above).
-2. **A third cautious open model:** `qwen2.5:7b-instruct`, preregistered as
-   the second replication. Running.
+2. ~~A third cautious open model~~: qwen2.5:7b was null. The size ladder then
+   found the effect at qwen 1.5B and 14B (above).
 3. **Only then a small, targeted validation on Claude**, sized to the
    confirmed effect.
