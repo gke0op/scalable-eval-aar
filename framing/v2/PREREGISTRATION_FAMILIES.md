@@ -74,3 +74,36 @@ H1.
 - **Chat templates differ.** Some may handle the assistant prefill poorly.
   The instrument check exists to catch that, not to tune it away.
 - **Six families is still a small sample of models.**
+
+## Amendment 1 (2026-09-28): round 2, before any round-2 data
+
+**Why:** round 1's HF1 could not be tested. Only 4 of 6 families passed the
+instrument check, and the test needs 5 (the result: mean +0.69, 3 of 4
+positive, reported descriptively).
+
+**Round-2 models** (7 families, none used before):
+
+| Model (Ollama tag) | Family |
+|---|---|
+| `exaone3.5:7.8b` | LG |
+| `glm4:9b` | Zhipu |
+| `internlm2:7b` | Shanghai AI Lab |
+| `nemotron-mini:4b` | NVIDIA |
+| `smollm2:1.7b` | Hugging Face |
+| `yi:9b-chat` | 01.AI |
+| `deepseek-llm:7b-chat` | DeepSeek |
+
+Excluded as not independent families: fine-tunes of Mistral or Llama
+weights, such as Solar and Zephyr.
+
+**Protocol and eligibility:** identical to round 1.
+
+- **HF2 (primary for round 2):** the same test as HF1, applied to the eligible
+  round-2 models only. This is the clean confirmatory test, since round-1
+  results are already known. The minimum of 5 eligible models still applies.
+- **Secondary:** HF computed on all eligible new families from both rounds
+  pooled. It is **labeled partly post hoc**, because round 1 was seen before
+  round 2 was added.
+- **Disclosure:** round 2 was added *because* round 1 was underpowered, not
+  because of its direction. The stopping rule is fixed: no round 3 is added
+  on the basis of round 2's result.

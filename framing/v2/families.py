@@ -23,6 +23,7 @@ import harness_v2 as h  # noqa: E402
 import scenarios_v2 as sc2  # noqa: E402
 
 NEW = ["mistral:7b-instruct", "granite3.3:8b", "olmo2:7b", "command-r7b", "falcon3:7b", "phi4-mini"]
+NEW2 = ["exaone3.5:7.8b", "glm4:9b", "internlm2:7b", "nemotron-mini:4b", "smollm2:1.7b", "yi:9b-chat", "deepseek-llm:7b-chat"]
 EARLIER = ["gemma2:9b", "llama3.1:8b", "qwen2.5:7b-instruct"]
 LP = os.path.join(HERE, "results", "logprob.jsonl")
 VAL = os.path.join(HERE, "results", "families_validation.jsonl")
@@ -77,14 +78,14 @@ def signflip_models(vals):
 
 
 def analyze():
-    out = {"new": {}, "earlier": {}}
-    for group, models in (("new", NEW), ("earlier", EARLIER)):
+    out = {"new": {}, "new2": {}, "earlier": {}}
+    for group, models in (("new", NEW), ("new2", NEW2), ("earlier", EARLIER)):
         for m in models:
             lp = load_lp(m)
             if not lp:
                 out[group][m] = {"status": "no data"}
                 continue
-            el = eligibility(m, lp) if group == "new" else {"eligible": True}
+            el = eligibility(m, lp) if group in ("new", "new2") else {"eligible": True}
             res, h1 = model_effect(lp)
             out[group][m] = {**el, "H1": h1["diff"], "H1_ci": h1["ci"], "H1_p_holm": h1["p_holm"],
                              "H1_supported": h1["supported"],
@@ -96,26 +97,32 @@ def analyze():
                 r.setdefault("sample_idx", 0)
             by = ALP.A.main_effect(framed, "framing", "simulation", "real", y=lambda r: r["logit"])
             out[group][m]["per_scenario"] = {s: float(np.mean(v)) for s, v in by.items()}
-    elig = [m for m in NEW if out["new"].get(m, {}).get("eligible")]
-    vals = [out["new"][m]["H1"] for m in elig]
-    prim = {"eligible_models": elig, "n": len(elig), "mean_H1": float(np.mean(vals)) if vals else None,
-            "n_positive": int(sum(v > 0 for v in vals))}
-    if len(elig) >= 5:
-        prim["p_one_sided"] = signflip_models(vals)
-        prim["supported"] = bool(prim["p_one_sided"] < 0.05 and prim["mean_H1"] > 0)
-    else:
-        prim["note"] = "fewer than 5 eligible models: reported descriptively (minimum attainable p > 0.05)"
+    def hf(entries):
+        elig = [m for m, v in entries if v.get("eligible")]
+        vals = [v["H1"] for m, v in entries if v.get("eligible")]
+        r = {"eligible_models": elig, "n": len(elig), "mean_H1": float(np.mean(vals)) if vals else None,
+             "n_positive": int(sum(v > 0 for v in vals))}
+        if len(elig) >= 5:
+            r["p_one_sided"] = signflip_models(vals)
+            r["supported"] = bool(r["p_one_sided"] < 0.05 and r["mean_H1"] > 0)
+        else:
+            r["note"] = "fewer than 5 eligible models: reported descriptively (minimum attainable p > 0.05)"
+        if elig:
+            per = dict(entries)
+            scen = set.intersection(*(set(per[m]["per_scenario"]) for m in elig))
+            sv = [float(np.mean([per[m]["per_scenario"][s] for m in elig])) for s in sorted(scen)]
+            g = np.random.default_rng(0).choice([-1.0, 1.0], size=(200_000, len(sv)))
+            r["scenario_level"] = {"n_scenarios": len(sv), "mean": float(np.mean(sv)),
+                                   "p_one_sided": float(np.mean((g * np.array(sv)).mean(1) >= np.mean(sv) - 1e-12))}
+        return r
+    live = lambda g: [(m, v) for m, v in out[g].items() if not v.get("status")]  # noqa: E731
+    prim = hf(live("new"))
     out["HF1"] = prim
-    # Secondary: per scenario, mean effect across eligible new models; sign-flip over scenarios.
-    if elig:
-        scen = set.intersection(*(set(out["new"][m]["per_scenario"]) for m in elig))
-        sv = [float(np.mean([out["new"][m]["per_scenario"][s] for m in elig])) for s in sorted(scen)]
-        g = np.random.default_rng(0).choice([-1.0, 1.0], size=(200_000, len(sv)))
-        out["HF1_scenarios"] = {"n_scenarios": len(sv), "mean": float(np.mean(sv)),
-                                "p_one_sided": float(np.mean((g * np.array(sv)).mean(1) >= np.mean(sv) - 1e-12))}
+    out["HF2_round2"] = hf(live("new2"))
+    out["HF_pooled_new"] = hf(live("new") + live("new2"))
     json.dump(out, open(os.path.join(HERE, "results", "families_summary.json"), "w"), indent=1)
     print(f"{'model':22} {'elig':>5} {'agree':>6} {'pf':>5} {'inval':>6} {'H1':>7} {'95% CI':>17} {'Holm p':>7} {'H1s':>6}")
-    for group in ("new", "earlier"):
+    for group in ("new", "new2", "earlier"):
         for m, v in out[group].items():
             if v.get("status"):
                 print(f"{m:22} {v['status']}")
@@ -125,9 +132,8 @@ def analyze():
             iv = f"{v['invalid_share']:.2f}" if "invalid_share" in v else "  -"
             print(f"{m:22} {str(v['eligible']):>5} {ag:>6} {pf:>5} {iv:>6} {v['H1']:+7.2f} [{v['H1_ci'][0]:+.2f}, {v['H1_ci'][1]:+.2f}] "
                   f"{v['H1_p_holm']:7.4f} {v['H1s']:+6.2f}")
-    print("\nHF1 (new families):", {k: v for k, v in prim.items()})
-    if "HF1_scenarios" in out:
-        print("HF1 scenario-level secondary:", out["HF1_scenarios"])
+    for k in ("HF1", "HF2_round2", "HF_pooled_new"):
+        print(f"\n{k}:", out[k])
 
 
 def main():
