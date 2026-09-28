@@ -148,6 +148,40 @@ than when told it's real.
     scenarios that feel more real could independently elicit both.
   - Only a direct test on a frontier model can distinguish these.
 
+## Confirmation on six new families (`PREREGISTRATION_FAMILIES.md`): **consistent, but the primary test was underpowered**
+
+| Model (new family) | Instrument check | sim − real (logit) | 95% CI | Holm p |
+|---|---|---|---|---|
+| olmo2:7b (AI2) | pass (agreement 0.96) | **+1.42** | [+0.85, +2.02] | 0.0005 |
+| falcon3:7b (TII) | pass (0.96) | **+1.07** | [+0.62, +1.55] | 0.0002 |
+| granite3.3:8b (IBM) | pass (1.00) | +0.58 | [−0.11, +1.27] | 0.60 |
+| command-r7b (Cohere) | pass (0.96) | −0.33 | [−0.86, +0.13] | 0.82 |
+| phi4-mini (Microsoft) | **fail**: 32% greedy parse failures | (+0.06) | – | – |
+| mistral:7b-instruct (Mistral) | **fail**: agreement 0.32 | – | – | – |
+
+- **Eligibility:** only 4 of 6 new families passed the preregistered instrument
+  check.
+  - Mistral's chat template does not continue the prefilled `{"tool": "`, so
+    91% of the next-token mass falls on non-tool tokens. Its greedy behavior
+    is normal (19 of 28 risky), so the problem is the instrument on that
+    model, not the model.
+  - phi4-mini fails to produce valid tool JSON in 32% of greedy calls.
+- **HF1 (primary):** with 4 eligible models the minimum attainable p is above
+  0.05, so, as preregistered, the result is reported descriptively. The mean
+  effect is **+0.69**, 3 of 4 models are positive, and 2 of 4 are
+  individually significant. The preregistered "counts against" conditions
+  (mean ≤ 0, or at most half the models positive) were **not** met.
+- **HF1 scenario-level secondary:** the mean effect across the 4 eligible new
+  families is **+0.68**, one-sided p = 0.0001 (sign-flip over 24 scenarios).
+- **Overall, across 13 models or sizes:** 6 have `simulation > real` with a
+  CI excluding zero (gemma, llama, qwen 1.5B, qwen 14B, olmo2, falcon3).
+  - 3 more point positive without reaching significance (qwen 3B, granite,
+    phi4-mini, the last ineligible).
+  - 2 are null or slightly negative (qwen 7B, command-r7b).
+  - 1 (mistral) could not be measured.
+  - Of the models that could be measured, **none shows a significant effect
+    in the opposite direction.**
+
 ## Robustness
 
 - **Censoring.** 114 gemma cells had the risky tool outside the top 20
