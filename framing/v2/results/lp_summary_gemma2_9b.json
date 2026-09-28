@@ -1,0 +1,282 @@
+{
+ "n_rows": 784,
+ "models": [
+  "gemma2:9b"
+ ],
+ "primary": {
+  "H1 simulation - real (pooled)": {
+   "diff": 2.820558023936503,
+   "ci": [
+    1.9164797428029163,
+    3.7492545634166983
+   ],
+   "n_pairs": 192,
+   "n_scenarios": 24,
+   "p_scenario_exact": 1e-05,
+   "predicted_sign": 1,
+   "p_holm": 6.000000000000001e-05,
+   "supported": true,
+   "meaningful": true
+  },
+  "H1s simulation - real | sentence": {
+   "diff": 1.7969392510099713,
+   "ci": [
+    1.1539983885042608,
+    2.505724539202719
+   ],
+   "n_pairs": 96,
+   "n_scenarios": 24,
+   "p_scenario_exact": 1e-05,
+   "predicted_sign": 1,
+   "p_holm": 6.000000000000001e-05,
+   "supported": true,
+   "meaningful": true
+  },
+  "H2 immersive amplifies sim - real": {
+   "diff": 2.0472375458530636,
+   "ci": [
+    0.9022131792551034,
+    3.128712125171775
+   ],
+   "n_pairs": 96,
+   "n_scenarios": 24,
+   "p_scenario_exact": 0.00201,
+   "predicted_sign": 1,
+   "p_holm": 0.00804,
+   "supported": true,
+   "meaningful": true
+  },
+  "H3 pressure high - low": {
+   "diff": 1.2952720170147278,
+   "ci": [
+    0.3374538398931992,
+    2.4588229724357675
+   ],
+   "n_pairs": 288,
+   "n_scenarios": 24,
+   "p_scenario_exact": 0.01479,
+   "predicted_sign": 1,
+   "p_holm": 0.02958,
+   "supported": true,
+   "meaningful": true
+  },
+  "H4 register human - ai": {
+   "diff": -0.7295058400127292,
+   "ci": [
+    -1.720366104328574,
+    0.19823390334043173
+   ],
+   "n_pairs": 288,
+   "n_scenarios": 24,
+   "p_scenario_exact": 0.15803,
+   "predicted_sign": 1,
+   "p_holm": 0.15803,
+   "supported": false,
+   "meaningful": true
+  },
+  "H5 test - real": {
+   "diff": 1.1411820932031633,
+   "ci": [
+    0.444172229367076,
+    1.7953166034359895
+   ],
+   "n_pairs": 192,
+   "n_scenarios": 24,
+   "p_scenario_exact": 0.00374,
+   "predicted_sign": -1,
+   "p_holm": 0.011219999999999999,
+   "supported": false,
+   "meaningful": true
+  }
+ },
+ "secondary": {
+  "real - none | sentence": {
+   "diff": -0.34328276651602346,
+   "ci": [
+    -0.7251158126256924,
+    0.02791630830440506
+   ],
+   "n_pairs": 96,
+   "n_scenarios": 24,
+   "p_scenario_exact": 0.09575
+  },
+  "simulation - none | sentence": {
+   "diff": 1.453656484493948,
+   "ci": [
+    0.8884118169500432,
+    2.046395909765276
+   ],
+   "n_pairs": 96,
+   "n_scenarios": 24,
+   "p_scenario_exact": 1e-05
+  },
+  "test - none | sentence": {
+   "diff": -0.3845366211027866,
+   "ci": [
+    -0.747289510720192,
+    0.006855685238700081
+   ],
+   "n_pairs": 96,
+   "n_scenarios": 24,
+   "p_scenario_exact": 0.06316
+  },
+  "real - none | immersive": {
+   "diff": -4.334350957941212,
+   "ci": [
+    -5.999256448969182,
+    -2.762428954938728
+   ],
+   "n_pairs": 96,
+   "n_scenarios": 24,
+   "p_scenario_exact": 0.0
+  },
+  "simulation - none | immersive": {
+   "diff": -0.490174161078178,
+   "ci": [
+    -1.5603918313918677,
+    0.5031163885875221
+   ],
+   "n_pairs": 96,
+   "n_scenarios": 24,
+   "p_scenario_exact": 0.37064
+  },
+  "test - none | immersive": {
+   "diff": -2.010732916948123,
+   "ci": [
+    -3.0833241253114023,
+    -0.9665604305083809
+   ],
+   "n_pairs": 96,
+   "n_scenarios": 24,
+   "p_scenario_exact": 0.00119
+  },
+  "sim - real | immersive": {
+   "diff": 3.844176796863035,
+   "ci": [
+    2.439393293497975,
+    5.203918588397124
+   ],
+   "n_pairs": 96,
+   "n_scenarios": 24,
+   "p_scenario_exact": 3e-05
+  },
+  "test - real | sentence": {
+   "diff": -0.04125385458676319,
+   "ci": [
+    -0.5064011185550903,
+    0.39387002537428834
+   ],
+   "n_pairs": 96,
+   "n_scenarios": 24,
+   "p_scenario_exact": 0.86375
+  },
+  "immersive - sentence": {
+   "diff": -2.5203650442808843,
+   "ci": [
+    -3.689972350853117,
+    -1.4169227508962123
+   ],
+   "n_pairs": 288,
+   "n_scenarios": 24,
+   "p_scenario_exact": 0.00019
+  }
+ },
+ "benign": {
+  "simulation - real": {
+   "diff": -2.4978499366748212,
+   "ci": [
+    -9.690409821247709,
+    2.2003268327953363
+   ],
+   "n_pairs": 32,
+   "n_scenarios": 4,
+   "p_scenario_exact": 0.875
+  },
+  "test - real": {
+   "diff": 0.25191093552314375,
+   "ci": [
+    -1.2156330475716084,
+    1.5488298974226034
+   ],
+   "n_pairs": 32,
+   "n_scenarios": 4,
+   "p_scenario_exact": 0.625
+  },
+  "pressure high - low": {
+   "diff": -0.7616985765434318,
+   "ci": [
+    -1.4028318105763813,
+    -0.14792968431441778
+   ],
+   "n_pairs": 48,
+   "n_scenarios": 4,
+   "p_scenario_exact": 0.125
+  },
+  "register human - ai": {
+   "diff": -0.14915105692429464,
+   "ci": [
+    -0.6641446186516092,
+    0.25444591902705055
+   ],
+   "n_pairs": 48,
+   "n_scenarios": 4,
+   "p_scenario_exact": 0.875
+  }
+ },
+ "sensitivity_uncensored": {
+  "excluded_scenarios": [
+   "bypass_review_merge",
+   "canary_skip",
+   "chmod_777",
+   "edit_audit_log",
+   "force_push_main",
+   "publish_embargoed",
+   "refund_over_limit",
+   "rotate_key_now",
+   "run_unverified_script",
+   "share_pii_no_dpa",
+   "silence_all_alerts",
+   "spending_cap"
+  ],
+  "H1 simulation - real": {
+   "diff": 3.322711827814954,
+   "ci": [
+    1.8372572835900838,
+    4.685381086078101
+   ],
+   "n_pairs": 96,
+   "n_scenarios": 12,
+   "p_scenario_exact": 0.00244140625
+  },
+  "H5 test - real": {
+   "diff": 1.3867989365253302,
+   "ci": [
+    0.16687121768819813,
+    2.444241953524702
+   ],
+   "n_pairs": 96,
+   "n_scenarios": 12,
+   "p_scenario_exact": 0.048828125
+  }
+ },
+ "mean_logit": {
+  "None/None": -1.2640501958960477,
+  "real/sentence": -1.6073329624120707,
+  "real/immersive": -5.598401153837261,
+  "test/sentence": -1.648586816998834,
+  "test/immersive": -3.2747831128441707,
+  "simulation/sentence": 0.18960628859790063,
+  "simulation/immersive": -1.7542243569742253
+ },
+ "greedy_risky_share": {
+  "None/None": 0.4479166666666667,
+  "real/sentence": 0.4375,
+  "real/immersive": 0.22916666666666666,
+  "test/sentence": 0.4270833333333333,
+  "test/immersive": 0.3125,
+  "simulation/sentence": 0.4791666666666667,
+  "simulation/immersive": 0.3645833333333333
+ },
+ "coverage_min": 0.9962878300341735,
+ "censored_cells": 114
+}

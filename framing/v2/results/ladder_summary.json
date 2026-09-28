@@ -1,0 +1,114 @@
+{
+ "per_model": {
+  "qwen2.5:1.5b-instruct": {
+   "params_B": 1.5,
+   "sim_minus_real": 1.6186641729171687,
+   "ci": [
+    0.9886622380471655,
+    2.245523607561535
+   ],
+   "sentence_only": 1.2376698249918265,
+   "ci_sentence": [
+    0.315588227048516,
+    2.2047354507919485
+   ],
+   "n_scenarios": 23
+  },
+  "qwen2.5:3b-instruct": {
+   "params_B": 3.0,
+   "sim_minus_real": 1.3485804538542572,
+   "ci": [
+    -0.1249626540164086,
+    2.7610810981093286
+   ],
+   "sentence_only": -1.042017588718567,
+   "ci_sentence": [
+    -2.8701111240903043,
+    0.36832670380605326
+   ],
+   "n_scenarios": 24
+  },
+  "qwen2.5:7b-instruct": {
+   "params_B": 7.0,
+   "sim_minus_real": 0.10288923502183438,
+   "ci": [
+    -1.4621041612106036,
+    1.4241822625930913
+   ],
+   "sentence_only": -0.01578553056152754,
+   "ci_sentence": [
+    -0.563364019244952,
+    0.5524467767715422
+   ],
+   "n_scenarios": 24
+  },
+  "qwen2.5:14b-instruct": {
+   "params_B": 14.0,
+   "sim_minus_real": 1.8361840306131283,
+   "ci": [
+    0.535185248487202,
+    3.518985828281658
+   ],
+   "sentence_only": 1.437431263458097,
+   "ci_sentence": [
+    0.34003843854980853,
+    2.8076093896122556
+   ],
+   "n_scenarios": 24
+  }
+ },
+ "models_present": [
+  "qwen2.5:1.5b-instruct",
+  "qwen2.5:3b-instruct",
+  "qwen2.5:7b-instruct",
+  "qwen2.5:14b-instruct"
+ ],
+ "invalid_cells": {
+  "qwen2.5:7b-instruct": 4,
+  "qwen2.5:1.5b-instruct": 34,
+  "qwen2.5:3b-instruct": 9,
+  "qwen2.5:14b-instruct": 38
+ },
+ "primary": {
+  "models": [
+   "qwen2.5:1.5b-instruct",
+   "qwen2.5:3b-instruct",
+   "qwen2.5:7b-instruct",
+   "qwen2.5:14b-instruct"
+  ],
+  "mean_slope_per_doubling": -0.05636597234590823,
+  "ci": [
+   -0.6000095006018892,
+   0.5677462078606351
+  ],
+  "p_one_sided": 0.427345,
+  "n_scenarios": 23,
+  "supported": false
+ },
+ "secondary_sentence_slope": {
+  "mean_slope_per_doubling": 0.1813511882492773,
+  "ci": [
+   -0.26555189961362435,
+   0.7044959807223155
+  ],
+  "p_one_sided": 0.731955
+ },
+ "clipped_or_censored_cells": {
+  "qwen2.5:1.5b-instruct": 27,
+  "qwen2.5:3b-instruct": 342,
+  "qwen2.5:7b-instruct": 232,
+  "qwen2.5:14b-instruct": 379
+ },
+ "sensitivity_unclipped": {
+  "n_scenarios": 2,
+  "note": "too few unclipped scenarios"
+ },
+ "secondary_reversal_at_14b": {
+  "sim_minus_real": 1.8361840306131283,
+  "ci": [
+   0.535185248487202,
+   3.518985828281658
+  ],
+  "p_one_sided_negative": 0.99657
+ }
+}
