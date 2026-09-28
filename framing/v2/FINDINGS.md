@@ -173,7 +173,7 @@ than when told it's real.
   (mean ≤ 0, or at most half the models positive) were **not** met.
 - **HF1 scenario-level secondary:** the mean effect across the 4 eligible new
   families is **+0.68**, one-sided p = 0.0001 (sign-flip over 24 scenarios).
-- **Overall, across 13 models or sizes:** 6 have `simulation > real` with a
+- **Overall, across 12 models or sizes:** 6 have `simulation > real` with a
   CI excluding zero (gemma, llama, qwen 1.5B, qwen 14B, olmo2, falcon3).
   - 3 more point positive without reaching significance (qwen 3B, granite,
     phi4-mini, the last ineligible).
