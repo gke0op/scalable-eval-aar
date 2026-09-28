@@ -1,4 +1,4 @@
-# v2 Findings: "simulation" framing raises risky-tool odds in most small open models tested
+# v2 Findings: "simulation" framing raises risky-tool odds in several model families, but not as a general rule
 
 ## Claim
 
@@ -181,6 +181,47 @@ than when told it's real.
   - 1 (mistral) could not be measured.
   - Of the models that could be measured, **none shows a significant effect
     in the opposite direction.**
+
+## Round 2 of the family confirmation (Amendment 1): **the effect does not generalize across families**
+
+| Model (round 2) | Eligible? | Reason if not | sim − real (logit) | 95% CI |
+|---|---|---|---|---|
+| nemotron-mini:4b (NVIDIA) | yes | – | −0.29 | [−0.64, +0.02] |
+| smollm2:1.7b (Hugging Face) | yes | – | −0.33 | [−1.00, +0.20] |
+| glm4:9b (Zhipu) | no | 41% invalid cells | (+0.49) | – |
+| internlm2:7b (Shanghai AI Lab) | no | 28% invalid cells | (+0.16) | – |
+| exaone3.5:7.8b (LG) | no | agreement 0.75, no tool-name mass | – | – |
+| yi:9b-chat (01.AI) | no | run incomplete (225/784): instrument crashed | (+0.58, partial) | – |
+| deepseek-llm:7b-chat (DeepSeek) | no | run incomplete (230/784): instrument crashed | (−0.74, partial) | – |
+
+- **HF2 (round-2 primary):** 2 of 7 models are eligible, so it is reported
+  descriptively only. Both eligible models are slightly negative (mean −0.31),
+  and neither is significant.
+- **Pooled across all eligible new families** (6: granite, olmo2, command-r7b,
+  falcon3, nemotron-mini, smollm2; partly post hoc):
+  - model-level: mean **+0.35**, 3 of 6 positive, one-sided p = **0.19**, **not
+    supported**;
+  - scenario-level: mean +0.36, p = 0.01.
+- **The instrument crash.** For yi and deepseek, Ollama returned no
+  log-probabilities for some cells, and `logprob.py` raised an error instead of
+  recording the cell. Under the preregistered rule, incomplete runs are
+  ineligible. They are **not** rescued post hoc, because their partial
+  estimates were already seen. Fixing the crash (record such a cell as
+  invalid) is a clear improvement for any future run.
+- **Revised conclusion.**
+  - `simulation > real` is strong and replicable in several families:
+    gemma2, qwen2.5 (1.5B and 14B), OLMo 2 and Falcon 3, and modestly in
+    llama3.1.
+  - It **does not generalize across model families as a rule.** Across 6
+    independent, preregistered new families it is not significant, and 3 of
+    those 6 point slightly the other way.
+  - In the chat literature too, the effect's direction and size are
+    model-dependent.
+- **Instrument portability is a finding in itself.** The decision-token prefill
+  instrument could not cleanly measure 7 of 13 new families, because of
+  templates that ignore the prefill, JSON failures, invalid cells and empty
+  log-prob responses. A cross-family instrument needs a model-agnostic
+  alternative, such as scoring each tool call's likelihood directly.
 
 ## Robustness
 
