@@ -253,6 +253,29 @@
    }
   }
  },
+ "new2": {
+  "exaone3.5:7.8b": {
+   "status": "no data"
+  },
+  "glm4:9b": {
+   "status": "no data"
+  },
+  "internlm2:7b": {
+   "status": "no data"
+  },
+  "nemotron-mini:4b": {
+   "status": "no data"
+  },
+  "smollm2:1.7b": {
+   "status": "no data"
+  },
+  "yi:9b-chat": {
+   "status": "no data"
+  },
+  "deepseek-llm:7b-chat": {
+   "status": "no data"
+  }
+ },
  "earlier": {
   "gemma2:9b": {
    "eligible": true,
@@ -376,11 +399,35 @@
   "n": 4,
   "mean_H1": 0.6855442166246619,
   "n_positive": 3,
+  "note": "fewer than 5 eligible models: reported descriptively (minimum attainable p > 0.05)",
+  "scenario_level": {
+   "n_scenarios": 24,
+   "mean": 0.6837967146934721,
+   "p_one_sided": 0.000145
+  }
+ },
+ "HF2_round2": {
+  "eligible_models": [],
+  "n": 0,
+  "mean_H1": null,
+  "n_positive": 0,
   "note": "fewer than 5 eligible models: reported descriptively (minimum attainable p > 0.05)"
  },
- "HF1_scenarios": {
-  "n_scenarios": 24,
-  "mean": 0.6837967146934721,
-  "p_one_sided": 0.000145
+ "HF_pooled_new": {
+  "eligible_models": [
+   "granite3.3:8b",
+   "olmo2:7b",
+   "command-r7b",
+   "falcon3:7b"
+  ],
+  "n": 4,
+  "mean_H1": 0.6855442166246619,
+  "n_positive": 3,
+  "note": "fewer than 5 eligible models: reported descriptively (minimum attainable p > 0.05)",
+  "scenario_level": {
+   "n_scenarios": 24,
+   "mean": 0.6837967146934721,
+   "p_one_sided": 0.000145
+  }
  }
 }
